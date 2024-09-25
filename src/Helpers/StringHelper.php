@@ -10,8 +10,29 @@ declare(strict_types=1);
  */
  namespace WebStone\Stdlib\Helpers;
 
+use Exception;
+
 class StringHelper
 {
+    /**
+     * Checks if a given string is a serialized string.
+     *
+     * This method takes a string as input and determines if it is a valid
+     * serialized string. Serialized strings are typically used to store
+     * complex data structures in a string format.
+     *
+     * @param string $str The string to be checked.
+     * @return bool Returns true if the string is serialized, false otherwise.
+     */
+    public static function isSerialized($str)
+    {
+        try {
+            return $str === 'b:0;' || @unserialize($str) !== false;
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+
     /**
      * Checks if the given data is serializable.
      *
@@ -19,8 +40,12 @@ class StringHelper
      * @return bool Returns true if the data is serializable, false otherwise.
      */
     public static function isSerializable(mixed $data): bool
-    {
-        return @unserialize(serialize($data), ['allowed_classes' => true]) !== false;
+    {        
+        try {
+            return @unserialize(serialize($data), ['allowed_classes' => true]) !== false;
+        } catch (Exception $exception) {
+            return false;
+        }        
     }
 
     /**
